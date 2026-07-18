@@ -1,0 +1,10 @@
+[
+  { "model": "Airbus A320", "type": "Narrow Body" },
+  { "model": "Airbus A321", "type": "Narrow Body" },
+  { "model": "Airbus A330", "type": "Wide Body" },
+  { "model": "Airbus A350", "type": "Wide Body" },
+  { "model": "Boeing 737-800", "type": "Narrow Body" },
+  { "model": "Boeing 737 MAX 8", "type": "Narrow Body" },
+  { "model": "Boeing 777-300ER", "type": "Wide Body" },
+  { "model": "Boeing 787 Dreamliner", "type": "Wide Body" }
+]

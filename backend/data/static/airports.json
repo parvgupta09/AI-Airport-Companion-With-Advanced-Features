@@ -1,0 +1,87 @@
+[
+  {
+    "code": "DEL",
+    "city": "Delhi",
+    "country": "India",
+    "airport": "Indira Gandhi International Airport"
+  },
+  {
+    "code": "BOM",
+    "city": "Mumbai",
+    "country": "India",
+    "airport": "Chhatrapati Shivaji Maharaj International Airport"
+  },
+  {
+    "code": "BLR",
+    "city": "Bengaluru",
+    "country": "India",
+    "airport": "Kempegowda International Airport"
+  },
+  {
+    "code": "HYD",
+    "city": "Hyderabad",
+    "country": "India",
+    "airport": "Rajiv Gandhi International Airport"
+  },
+  {
+    "code": "MAA",
+    "city": "Chennai",
+    "country": "India",
+    "airport": "Chennai International Airport"
+  },
+  {
+    "code": "CCU",
+    "city": "Kolkata",
+    "country": "India",
+    "airport": "Netaji Subhas Chandra Bose International Airport"
+  },
+  {
+    "code": "JAI",
+    "city": "Jaipur",
+    "country": "India",
+    "airport": "Jaipur International Airport"
+  },
+  {
+    "code": "AMD",
+    "city": "Ahmedabad",
+    "country": "India",
+    "airport": "Sardar Vallabhbhai Patel International Airport"
+  },
+
+  {
+    "code": "DXB",
+    "city": "Dubai",
+    "country": "UAE",
+    "airport": "Dubai International Airport"
+  },
+  {
+    "code": "SIN",
+    "city": "Singapore",
+    "country": "Singapore",
+    "airport": "Singapore Changi Airport"
+  },
+  {
+    "code": "LHR",
+    "city": "London",
+    "country": "United Kingdom",
+    "airport": "Heathrow Airport"
+  },
+  {
+    "code": "FRA",
+    "city": "Frankfurt",
+    "country": "Germany",
+    "airport": "Frankfurt Airport"
+  },
+  {
+    "code": "JFK",
+    "city": "New York",
+    "country": "USA",
+    "airport": "John F. Kennedy International Airport"
+  },
+  {
+    "code": "HND",
+    "city": "Tokyo",
+    "country": "Japan",
+    "airport": "Haneda Airport"
+  }
+]

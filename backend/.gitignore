@@ -1,0 +1,28 @@
+# Virtual Environments (uv uses .venv by default)
+.venv/
+venv/
+env/
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment Variables / Secrets
+.env
+*.env
+.env.*
+
+# macOS System Files
+.DS_Store
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+
+# Frontend (If you add a React frontend later)
+node_modules/
+dist/
+build/

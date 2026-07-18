@@ -1,0 +1,18 @@
+[
+  { "code": "AI", "name": "Air India", "type": "both" },
+  { "code": "6E", "name": "IndiGo", "type": "domestic" },
+  { "code": "SG", "name": "SpiceJet", "type": "domestic" },
+  { "code": "QP", "name": "Akasa Air", "type": "domestic" },
+  { "code": "UK", "name": "Vistara", "type": "domestic" },
+
+  { "code": "EK", "name": "Emirates", "type": "international" },
+  { "code": "QR", "name": "Qatar Airways", "type": "international" },
+  { "code": "SQ", "name": "Singapore Airlines", "type": "international" },
+  { "code": "LH", "name": "Lufthansa", "type": "international" },
+  { "code": "BA", "name": "British Airways", "type": "international" },
+  { "code": "EY", "name": "Etihad Airways", "type": "international" },
+  { "code": "CX", "name": "Cathay Pacific", "type": "international" },
+  { "code": "MH", "name": "Malaysia Airlines", "type": "international" },
+  { "code": "TG", "name": "Thai Airways", "type": "international" },
+  { "code": "JL", "name": "Japan Airlines", "type": "international" }
+]

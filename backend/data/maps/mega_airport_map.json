@@ -1,0 +1,238 @@
+{
+  "airport_name": "Autonomous Mega Hub",
+  "nodes": [
+    
+    // ==========================================
+    // INTER-TERMINAL CONNECTORS (The Bridges)
+    // ==========================================
+    {"id": "airside_transit_t1_t2", "name": "Airside Inter-Terminal Train", "type": "terminal_connector", "terminal": "Transit", "floor": 1},
+    {"id": "landside_shuttle_t1_t2", "name": "Landside Terminal Shuttle Bus", "type": "terminal_connector", "terminal": "Transit", "floor": 1},
+
+    // ==========================================
+    // TERMINAL 1 - ARCHITECTURAL HUBS
+    // ==========================================
+    {"id": "landside_t1", "name": "T1 Arrivals & Pre-Security", "type": "hub", "terminal": "T1", "floor": 1},
+    {"id": "airside_main_t1", "name": "T1 Central Plaza", "type": "hub", "terminal": "T1", "floor": 1},
+    {"id": "airside_gates_t1", "name": "T1 Gate Concourse", "type": "hub", "terminal": "T1", "floor": 1},
+
+    // --- T1 CORE INFRASTRUCTURE ---
+    {"id": "checkin_t1", "name": "T1 Check-in Counters", "type": "core", "subtype": "checkin", "terminal": "T1"},
+    {"id": "security_t1_a", "name": "T1 Security Checkpoint A", "type": "core", "subtype": "security", "terminal": "T1"},
+    {"id": "security_t1_b", "name": "T1 Security Checkpoint B", "type": "core", "subtype": "security", "terminal": "T1"},
+    {"id": "transit_desk_t1", "name": "T1 Transfer Desk", "type": "core", "subtype": "transit", "terminal": "T1"},
+    {"id": "info_t1_1", "name": "T1 Landside Info Desk", "type": "core", "subtype": "info", "terminal": "T1"},
+    {"id": "info_t1_2", "name": "T1 Airside Info Desk", "type": "core", "subtype": "info", "terminal": "T1"},
+    {"id": "gate_t1_01", "name": "Gate 1", "type": "boarding_gate", "terminal": "T1"},
+    {"id": "gate_t1_02", "name": "Gate 2", "type": "boarding_gate", "terminal": "T1"},
+    {"id": "gate_t1_03", "name": "Gate 3", "type": "boarding_gate", "terminal": "T1"},
+    {"id": "gate_t1_04", "name": "Gate 4", "type": "boarding_gate", "terminal": "T1"},
+    {"id": "gate_t1_05", "name": "Gate 5", "type": "boarding_gate", "terminal": "T1"},
+    {"id": "baggage_t1_01", "name": "T1 Baggage Belt 1", "type": "core", "subtype": "baggage", "terminal": "T1"},
+    {"id": "baggage_t1_02", "name": "T1 Baggage Belt 2", "type": "core", "subtype": "baggage", "terminal": "T1"},
+    {"id": "baggage_t1_03", "name": "T1 Baggage Belt 3", "type": "core", "subtype": "baggage", "terminal": "T1"},
+
+    // --- T1 AMENITIES ---
+    {"id": "washroom_t1_land", "name": "T1 Landside Washrooms", "type": "amenity", "subtype": "washroom", "terminal": "T1"},
+    {"id": "washroom_t1_plaza", "name": "T1 Plaza Washrooms", "type": "amenity", "subtype": "washroom", "terminal": "T1"},
+    {"id": "washroom_t1_gates", "name": "T1 Gate Washrooms", "type": "amenity", "subtype": "washroom", "terminal": "T1"},
+    {"id": "water_t1_1", "name": "T1 Hydration Station 1", "type": "amenity", "subtype": "fountain", "terminal": "T1"},
+    {"id": "water_t1_2", "name": "T1 Hydration Station 2", "type": "amenity", "subtype": "fountain", "terminal": "T1"},
+    {"id": "charge_t1_1", "name": "T1 Charging Station 1", "type": "amenity", "subtype": "charging", "terminal": "T1"},
+    {"id": "charge_t1_2", "name": "T1 Charging Station 2", "type": "amenity", "subtype": "charging", "terminal": "T1"},
+    {"id": "smoke_t1", "name": "T1 Smoking Lounge", "type": "amenity", "subtype": "smoking", "terminal": "T1"},
+    {"id": "baby_t1", "name": "T1 Nursing Room", "type": "amenity", "subtype": "baby_care", "terminal": "T1"},
+    {"id": "prayer_t1", "name": "T1 Prayer Room", "type": "amenity", "subtype": "prayer", "terminal": "T1"},
+
+    // --- T1 SERVICES ---
+    {"id": "wheelchair_t1", "name": "T1 Special Assistance", "type": "service", "subtype": "wheelchair", "terminal": "T1"},
+    {"id": "medical_t1_1", "name": "T1 Medical Center", "type": "service", "subtype": "medical", "terminal": "T1"},
+    {"id": "pharmacy_t1_1", "name": "T1 Pharmacy", "type": "service", "subtype": "pharmacy", "terminal": "T1"},
+    {"id": "lost_t1_1", "name": "T1 Lost & Found", "type": "service", "subtype": "lost_found", "terminal": "T1"},
+    {"id": "pet_t1", "name": "T1 Pet Relief Area", "type": "service", "subtype": "pet", "terminal": "T1"},
+    {"id": "atm_t1_1", "name": "T1 ATM", "type": "service", "subtype": "atm", "terminal": "T1"},
+    {"id": "forex_t1_1", "name": "T1 Forex", "type": "service", "subtype": "forex", "terminal": "T1"},
+    {"id": "sim_t1_1", "name": "T1 Telecom Kiosk", "type": "service", "subtype": "sim", "terminal": "T1"},
+
+    // --- T1 RETAIL & DINING ---
+    {"id": "fashion_t1_1", "name": "Zara T1", "type": "retail", "category": "fashion", "terminal": "T1"},
+    {"id": "elec_t1_1", "name": "Apple Store T1", "type": "retail", "category": "electronics", "terminal": "T1"},
+    {"id": "watch_t1_1", "name": "Rolex T1", "type": "retail", "category": "watches", "terminal": "T1"},
+    {"id": "dutyfree_t1_1", "name": "T1 Duty Free Main", "type": "retail", "category": "duty_free", "terminal": "T1"},
+    {"id": "fast_t1_1", "name": "McDonald's T1", "type": "dining", "category": "fast_food", "terminal": "T1"},
+    {"id": "cafe_t1_1", "name": "Starbucks T1", "type": "dining", "category": "cafe", "terminal": "T1"},
+    {"id": "rest_t1_1", "name": "The Italian Kitchen T1", "type": "dining", "category": "restaurant", "terminal": "T1"},
+    {"id": "lounge_t1_1", "name": "Premium Plaza Lounge T1", "type": "comfort", "subtype": "lounge", "terminal": "T1"},
+
+    // ==========================================
+    // TERMINAL 2 - ARCHITECTURAL HUBS
+    // ==========================================
+    {"id": "landside_t2", "name": "T2 Arrivals & Pre-Security", "type": "hub", "terminal": "T2", "floor": 1},
+    {"id": "airside_main_t2", "name": "T2 Central Plaza", "type": "hub", "terminal": "T2", "floor": 1},
+    {"id": "airside_gates_t2", "name": "T2 Gate Concourse", "type": "hub", "terminal": "T2", "floor": 1},
+
+    // --- T2 CORE INFRASTRUCTURE ---
+    {"id": "checkin_t2", "name": "T2 Check-in Counters", "type": "core", "subtype": "checkin", "terminal": "T2"},
+    {"id": "security_t2_a", "name": "T2 Security Checkpoint A", "type": "core", "subtype": "security", "terminal": "T2"},
+    {"id": "security_t2_b", "name": "T2 Security Checkpoint B", "type": "core", "subtype": "security", "terminal": "T2"},
+    {"id": "transit_desk_t2", "name": "T2 Transfer Desk", "type": "core", "subtype": "transit", "terminal": "T2"},
+    {"id": "info_t2_1", "name": "T2 Landside Info Desk", "type": "core", "subtype": "info", "terminal": "T2"},
+    {"id": "info_t2_2", "name": "T2 Airside Info Desk", "type": "core", "subtype": "info", "terminal": "T2"},
+    {"id": "gate_t2_01", "name": "Gate 6", "type": "boarding_gate", "terminal": "T2"},
+    {"id": "gate_t2_02", "name": "Gate 7", "type": "boarding_gate", "terminal": "T2"},
+    {"id": "gate_t2_03", "name": "Gate 8", "type": "boarding_gate", "terminal": "T2"},
+    {"id": "gate_t2_04", "name": "Gate 9", "type": "boarding_gate", "terminal": "T2"},
+    {"id": "gate_t2_05", "name": "Gate 10", "type": "boarding_gate", "terminal": "T2"},
+    {"id": "baggage_t2_01", "name": "T2 Baggage Belt 4", "type": "core", "subtype": "baggage", "terminal": "T2"},
+    {"id": "baggage_t2_02", "name": "T2 Baggage Belt 5", "type": "core", "subtype": "baggage", "terminal": "T2"},
+    {"id": "baggage_t2_03", "name": "T2 Baggage Belt 6", "type": "core", "subtype": "baggage", "terminal": "T2"},
+
+    // --- T2 AMENITIES ---
+    {"id": "washroom_t2_land", "name": "T2 Landside Washrooms", "type": "amenity", "subtype": "washroom", "terminal": "T2"},
+    {"id": "washroom_t2_plaza", "name": "T2 Plaza Washrooms", "type": "amenity", "subtype": "washroom", "terminal": "T2"},
+    {"id": "washroom_t2_gates", "name": "T2 Gate Washrooms", "type": "amenity", "subtype": "washroom", "terminal": "T2"},
+    {"id": "water_t2_1", "name": "T2 Hydration Station 1", "type": "amenity", "subtype": "fountain", "terminal": "T2"},
+    {"id": "water_t2_2", "name": "T2 Hydration Station 2", "type": "amenity", "subtype": "fountain", "terminal": "T2"},
+    {"id": "charge_t2_1", "name": "T2 Charging Station 1", "type": "amenity", "subtype": "charging", "terminal": "T2"},
+    {"id": "charge_t2_2", "name": "T2 Charging Station 2", "type": "amenity", "subtype": "charging", "terminal": "T2"},
+    {"id": "smoke_t2", "name": "T2 Smoking Lounge", "type": "amenity", "subtype": "smoking", "terminal": "T2"},
+    {"id": "baby_t2", "name": "T2 Nursing Room", "type": "amenity", "subtype": "baby_care", "terminal": "T2"},
+    {"id": "prayer_t2", "name": "T2 Prayer Room", "type": "amenity", "subtype": "prayer", "terminal": "T2"},
+
+    // --- T2 SERVICES ---
+    {"id": "wheelchair_t2", "name": "T2 Special Assistance", "type": "service", "subtype": "wheelchair", "terminal": "T2"},
+    {"id": "medical_t2_1", "name": "T2 Medical Center", "type": "service", "subtype": "medical", "terminal": "T2"},
+    {"id": "pharmacy_t2_1", "name": "T2 Pharmacy", "type": "service", "subtype": "pharmacy", "terminal": "T2"},
+    {"id": "lost_t2_1", "name": "T2 Lost & Found", "type": "service", "subtype": "lost_found", "terminal": "T2"},
+    {"id": "pet_t2", "name": "T2 Pet Relief Area", "type": "service", "subtype": "pet", "terminal": "T2"},
+    {"id": "atm_t2_1", "name": "T2 ATM", "type": "service", "subtype": "atm", "terminal": "T2"},
+    {"id": "forex_t2_1", "name": "T2 Forex", "type": "service", "subtype": "forex", "terminal": "T2"},
+    {"id": "sim_t2_1", "name": "T2 Telecom Kiosk", "type": "service", "subtype": "sim", "terminal": "T2"},
+
+    // --- T2 RETAIL & DINING ---
+    {"id": "fashion_t2_1", "name": "H&M T2", "type": "retail", "category": "fashion", "terminal": "T2"},
+    {"id": "elec_t2_1", "name": "Croma T2", "type": "retail", "category": "electronics", "terminal": "T2"},
+    {"id": "watch_t2_1", "name": "Casio T2", "type": "retail", "category": "watches", "terminal": "T2"},
+    {"id": "dutyfree_t2_1", "name": "T2 Duty Free Main", "type": "retail", "category": "duty_free", "terminal": "T2"},
+    {"id": "fast_t2_1", "name": "Burger King T2", "type": "dining", "category": "fast_food", "terminal": "T2"},
+    {"id": "cafe_t2_1", "name": "Costa Coffee T2", "type": "dining", "category": "cafe", "terminal": "T2"},
+    {"id": "rest_t2_1", "name": "Asian Fusion T2", "type": "dining", "category": "restaurant", "terminal": "T2"},
+    {"id": "lounge_t2_1", "name": "Mastercard Lounge T2", "type": "comfort", "subtype": "lounge", "terminal": "T2"}
+  ],
+
+  "edges": [
+    // ==========================================
+    // INTER-TERMINAL CONNECTIONS (The Routing Magic)
+    // ==========================================
+    // Airside Transfer (for connecting flights, 15 min train ride)
+    {"from": "airside_main_t1", "to": "airside_transit_t1_t2", "dist": 15},
+    {"from": "airside_transit_t1_t2", "to": "airside_main_t2", "dist": 15},
+    
+    // Landside Transfer (for pre-security transfers, 10 min bus ride)
+    {"from": "landside_t1", "to": "landside_shuttle_t1_t2", "dist": 10},
+    {"from": "landside_shuttle_t1_t2", "to": "landside_t2", "dist": 10},
+
+    // ==========================================
+    // TERMINAL 1 EDGES
+    // ==========================================
+    // --- T1 SPINE ---
+    {"from": "landside_t1", "to": "checkin_t1", "dist": 5},
+    {"from": "landside_t1", "to": "security_t1_a", "dist": 10},
+    {"from": "landside_t1", "to": "security_t1_b", "dist": 10},
+    {"from": "security_t1_a", "to": "airside_main_t1", "dist": 5},
+    {"from": "security_t1_b", "to": "airside_main_t1", "dist": 5},
+    {"from": "airside_main_t1", "to": "airside_gates_t1", "dist": 10},
+
+    // --- T1 ATTACHMENTS ---
+    {"from": "landside_t1", "to": "info_t1_1", "dist": 2},
+    {"from": "landside_t1", "to": "washroom_t1_land", "dist": 5},
+    {"from": "landside_t1", "to": "baggage_t1_01", "dist": 8},
+    {"from": "landside_t1", "to": "baggage_t1_02", "dist": 8},
+    {"from": "landside_t1", "to": "baggage_t1_03", "dist": 8},
+    {"from": "landside_t1", "to": "atm_t1_1", "dist": 3},
+    {"from": "landside_t1", "to": "forex_t1_1", "dist": 3},
+    {"from": "landside_t1", "to": "sim_t1_1", "dist": 3},
+    {"from": "landside_t1", "to": "lost_t1_1", "dist": 6},
+
+    {"from": "airside_main_t1", "to": "info_t1_2", "dist": 2},
+    {"from": "airside_main_t1", "to": "transit_desk_t1", "dist": 4},
+    {"from": "airside_main_t1", "to": "washroom_t1_plaza", "dist": 5},
+    {"from": "airside_main_t1", "to": "water_t1_1", "dist": 3},
+    {"from": "airside_main_t1", "to": "water_t1_2", "dist": 3},
+    {"from": "airside_main_t1", "to": "prayer_t1", "dist": 8},
+    {"from": "airside_main_t1", "to": "wheelchair_t1", "dist": 4},
+    {"from": "airside_main_t1", "to": "medical_t1_1", "dist": 7},
+    {"from": "airside_main_t1", "to": "pharmacy_t1_1", "dist": 7},
+    {"from": "airside_main_t1", "to": "dutyfree_t1_1", "dist": 2},
+    {"from": "airside_main_t1", "to": "fashion_t1_1", "dist": 4},
+    {"from": "airside_main_t1", "to": "elec_t1_1", "dist": 5},
+    {"from": "airside_main_t1", "to": "watch_t1_1", "dist": 5},
+    {"from": "airside_main_t1", "to": "rest_t1_1", "dist": 6},
+    {"from": "airside_main_t1", "to": "lounge_t1_1", "dist": 10},
+
+    {"from": "airside_gates_t1", "to": "gate_t1_01", "dist": 5},
+    {"from": "airside_gates_t1", "to": "gate_t1_02", "dist": 8},
+    {"from": "airside_gates_t1", "to": "gate_t1_03", "dist": 12},
+    {"from": "airside_gates_t1", "to": "gate_t1_04", "dist": 15},
+    {"from": "airside_gates_t1", "to": "gate_t1_05", "dist": 18},
+    {"from": "airside_gates_t1", "to": "washroom_t1_gates", "dist": 6},
+    {"from": "airside_gates_t1", "to": "charge_t1_1", "dist": 4},
+    {"from": "airside_gates_t1", "to": "charge_t1_2", "dist": 14},
+    {"from": "airside_gates_t1", "to": "smoke_t1", "dist": 16},
+    {"from": "airside_gates_t1", "to": "baby_t1", "dist": 7},
+    {"from": "airside_gates_t1", "to": "pet_t1", "dist": 19},
+    {"from": "airside_gates_t1", "to": "fast_t1_1", "dist": 5},
+    {"from": "airside_gates_t1", "to": "cafe_t1_1", "dist": 9},
+
+    // ==========================================
+    // TERMINAL 2 EDGES
+    // ==========================================
+    // --- T2 SPINE ---
+    {"from": "landside_t2", "to": "checkin_t2", "dist": 5},
+    {"from": "landside_t2", "to": "security_t2_a", "dist": 10},
+    {"from": "landside_t2", "to": "security_t2_b", "dist": 10},
+    {"from": "security_t2_a", "to": "airside_main_t2", "dist": 5},
+    {"from": "security_t2_b", "to": "airside_main_t2", "dist": 5},
+    {"from": "airside_main_t2", "to": "airside_gates_t2", "dist": 10},
+
+    // --- T2 ATTACHMENTS ---
+    {"from": "landside_t2", "to": "info_t2_1", "dist": 2},
+    {"from": "landside_t2", "to": "washroom_t2_land", "dist": 5},
+    {"from": "landside_t2", "to": "baggage_t2_01", "dist": 8},
+    {"from": "landside_t2", "to": "baggage_t2_02", "dist": 8},
+    {"from": "landside_t2", "to": "baggage_t2_03", "dist": 8},
+    {"from": "landside_t2", "to": "atm_t2_1", "dist": 3},
+    {"from": "landside_t2", "to": "forex_t2_1", "dist": 3},
+    {"from": "landside_t2", "to": "sim_t2_1", "dist": 3},
+    {"from": "landside_t2", "to": "lost_t2_1", "dist": 6},
+
+    {"from": "airside_main_t2", "to": "info_t2_2", "dist": 2},
+    {"from": "airside_main_t2", "to": "transit_desk_t2", "dist": 4},
+    {"from": "airside_main_t2", "to": "washroom_t2_plaza", "dist": 5},
+    {"from": "airside_main_t2", "to": "water_t2_1", "dist": 3},
+    {"from": "airside_main_t2", "to": "water_t2_2", "dist": 3},
+    {"from": "airside_main_t2", "to": "prayer_t2", "dist": 8},
+    {"from": "airside_main_t2", "to": "wheelchair_t2", "dist": 4},
+    {"from": "airside_main_t2", "to": "medical_t2_1", "dist": 7},
+    {"from": "airside_main_t2", "to": "pharmacy_t2_1", "dist": 7},
+    {"from": "airside_main_t2", "to": "dutyfree_t2_1", "dist": 2},
+    {"from": "airside_main_t2", "to": "fashion_t2_1", "dist": 4},
+    {"from": "airside_main_t2", "to": "elec_t2_1", "dist": 5},
+    {"from": "airside_main_t2", "to": "watch_t2_1", "dist": 5},
+    {"from": "airside_main_t2", "to": "rest_t2_1", "dist": 6},
+    {"from": "airside_main_t2", "to": "lounge_t2_1", "dist": 10},
+
+    {"from": "airside_gates_t2", "to": "gate_t2_01", "dist": 5},
+    {"from": "airside_gates_t2", "to": "gate_t2_02", "dist": 8},
+    {"from": "airside_gates_t2", "to": "gate_t2_03", "dist": 12},
+    {"from": "airside_gates_t2", "to": "gate_t2_04", "dist": 15},
+    {"from": "airside_gates_t2", "to": "gate_t2_05", "dist": 18},
+    {"from": "airside_gates_t2", "to": "washroom_t2_gates", "dist": 6},
+    {"from": "airside_gates_t2", "to": "charge_t2_1", "dist": 4},
+    {"from": "airside_gates_t2", "to": "charge_t2_2", "dist": 14},
+    {"from": "airside_gates_t2", "to": "smoke_t2", "dist": 16},
+    {"from": "airside_gates_t2", "to": "baby_t2", "dist": 7},
+    {"from": "airside_gates_t2", "to": "pet_t2", "dist": 19},
+    {"from": "airside_gates_t2", "to": "fast_t2_1", "dist": 5},
+    {"from": "airside_gates_t2", "to": "cafe_t2_1", "dist": 9}
+  ]
+}
