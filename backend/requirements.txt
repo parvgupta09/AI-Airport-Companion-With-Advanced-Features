@@ -5,3 +5,7 @@ pydantic
 dotenv
 PyJWT
 passlib
+twilio
+sendgrid
+chatterbox-tts
+qdrant_client

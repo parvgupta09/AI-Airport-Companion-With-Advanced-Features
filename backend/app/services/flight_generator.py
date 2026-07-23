@@ -1,3 +1,5 @@
+"These generate the details of the person's flight based on the PNR, source, destination, and departure date and time."
+
 from __future__ import annotations
 import json
 import random
