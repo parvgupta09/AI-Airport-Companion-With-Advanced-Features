@@ -1,7 +1,7 @@
 import logging
 from qdrant_client import QdrantClient
 from qdrant_client.http import models
-from app.core.config import QDRANT_URL, QDRANT_API_KEY
+from app.core.config import QDRANT_URL, QDRANT_API_KEY, QDRANT_COLLECTION_NAME
 
 logger = logging.getLogger(__name__)
 
@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 class QdrantService:
     def __init__(self):
 
-        self.collection_name = "airport_policies"
+        self.collection_name = QDRANT_COLLECTION_NAME
 
         try:
             self.client = QdrantClient(
