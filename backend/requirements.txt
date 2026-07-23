@@ -9,3 +9,9 @@ twilio
 sendgrid
 chatterbox-tts
 qdrant_client
+langchain
+langchain_community
+langchain_google_genai
+langchain_text_splitters
+langchain_qdrant
+httpx<=0.27.2
