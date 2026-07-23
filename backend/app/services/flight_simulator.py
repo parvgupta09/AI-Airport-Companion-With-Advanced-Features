@@ -43,7 +43,8 @@ class FlightSimulator:
 
         time_until_departure = departure_time - now
 
-        rng = random.Random(f"{flight.pnr}_chaos_engine")
+        flight_date = flight.departure_time_utc.strftime("%Y-%m-%d")
+        rng = random.Random(f"{flight.flight_number}_{flight_date}_chaos_engine")
 
         gate_roll = rng.random()
         delay_roll = rng.random()
