@@ -40,8 +40,7 @@ ai_airport_companion/
 │   │   │   ├── flight_tool.py                # Flight information
 │   │   │   ├── wayfinding_tool.py            # Airport navigation
 │   │   │   ├── qdrant_search_tool.py         # Policy retrieval
-│   │   │   ├── reminder_tool.py              # Reminder scheduling
-│   │   │   └── special_assistance_tool.py    # Accessibility services
+│   │   │   └── reminder_tool.py              # Reminder scheduling
 │   │   │
 │   │   ├── services/
 │   │   │   ├── flight_generator.py           # Mock AviationStack
