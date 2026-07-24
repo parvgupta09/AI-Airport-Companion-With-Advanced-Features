@@ -38,7 +38,6 @@ ai_airport_companion/
 │   │   │
 │   │   ├── tools/
 │   │   │   ├── flight_tool.py                # Flight information
-│   │   │   ├── pnr_resolver_tool.py          # PNR validation
 │   │   │   ├── wayfinding_tool.py            # Airport navigation
 │   │   │   ├── qdrant_search_tool.py         # Policy retrieval
 │   │   │   ├── reminder_tool.py              # Reminder scheduling
@@ -47,6 +46,7 @@ ai_airport_companion/
 │   │   ├── services/
 │   │   │   ├── flight_generator.py           # Mock AviationStack
 │   │   │   ├── flight_simulator.py           # Flight event simulator
+│   │   │   ├── pnr_service.py                # PNR validation
 │   │   │   ├── qdrant_service.py             # Vector database
 │   │   │   ├── weather_service.py            # Weather API
 │   │   │   ├── email_service.py              # Email notifications

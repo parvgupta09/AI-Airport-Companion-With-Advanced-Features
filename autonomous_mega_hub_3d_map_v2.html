@@ -1,0 +1,314 @@
+
+<div style="width:100%;height:620px;position:relative;background:#080d18;border-radius:12px;overflow:hidden;">
+<h2 class="sr-only">Interactive 3D airport map with four runways, two terminals, gates, retail, amenities and inter-terminal connectors</h2>
+<canvas id="c" style="width:100%;height:100%;display:block;"></canvas>
+<div id="tooltip" style="position:absolute;top:12px;left:12px;background:rgba(8,13,24,0.93);border:0.5px solid rgba(255,255,255,0.15);border-radius:8px;padding:8px 12px;color:#fff;font-size:13px;font-family:sans-serif;min-width:160px;pointer-events:none;display:none;">
+  <div id="tt-name" style="font-weight:500;margin-bottom:2px;"></div>
+  <div id="tt-type" style="color:rgba(255,255,255,0.45);font-size:11px;"></div>
+</div>
+<div style="position:absolute;bottom:12px;left:12px;background:rgba(8,13,24,0.88);border:0.5px solid rgba(255,255,255,0.12);border-radius:6px;padding:6px 10px;">
+  <div style="font-size:10px;color:rgba(255,255,255,0.35);margin-bottom:4px;font-family:sans-serif;">LEGEND</div>
+  <div style="display:flex;flex-wrap:wrap;gap:5px 10px;">
+    <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:rgba(255,255,255,0.65);font-family:sans-serif;"><span style="width:9px;height:9px;border-radius:2px;background:#378ADD;display:inline-block;"></span>Gates</span>
+    <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:rgba(255,255,255,0.65);font-family:sans-serif;"><span style="width:9px;height:9px;border-radius:2px;background:#1D9E75;display:inline-block;"></span>Dining</span>
+    <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:rgba(255,255,255,0.65);font-family:sans-serif;"><span style="width:9px;height:9px;border-radius:2px;background:#7F77DD;display:inline-block;"></span>Retail</span>
+    <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:rgba(255,255,255,0.65);font-family:sans-serif;"><span style="width:9px;height:9px;border-radius:2px;background:#D85A30;display:inline-block;"></span>Services</span>
+    <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:rgba(255,255,255,0.65);font-family:sans-serif;"><span style="width:9px;height:9px;border-radius:2px;background:#BA7517;display:inline-block;"></span>Amenities</span>
+    <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:rgba(255,255,255,0.65);font-family:sans-serif;"><span style="width:9px;height:9px;border-radius:2px;background:#888;display:inline-block;"></span>Runway</span>
+  </div>
+</div>
+<div style="position:absolute;top:12px;right:12px;background:rgba(8,13,24,0.85);border:0.5px solid rgba(255,255,255,0.12);border-radius:6px;padding:6px 10px;font-size:11px;color:rgba(255,255,255,0.45);font-family:sans-serif;">Drag · Scroll to zoom</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+const canvas=document.getElementById('c');
+const W=canvas.parentElement.clientWidth, H=canvas.parentElement.clientHeight;
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(W,H);
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x080d18);
+scene.fog=new THREE.Fog(0x080d18,160,340);
+
+const camera=new THREE.PerspectiveCamera(42,W/H,0.1,600);
+camera.position.set(0,130,160);
+camera.lookAt(0,0,0);
+
+scene.add(new THREE.AmbientLight(0x223355,0.9));
+const sun=new THREE.DirectionalLight(0xffeedd,1.0);
+sun.position.set(80,150,80);
+sun.castShadow=true;
+sun.shadow.mapSize.set(2048,2048);
+['left','right','top','bottom'].forEach((s,i)=>sun.shadow.camera[s]=[-180,180,180,-180][i]);
+sun.shadow.camera.far=500;
+scene.add(sun);
+const fill=new THREE.DirectionalLight(0x3355aa,0.35);
+fill.position.set(-80,50,-80);
+scene.add(fill);
+
+const interactives=[];
+const tt=document.getElementById('tooltip');
+const ttN=document.getElementById('tt-name');
+const ttT=document.getElementById('tt-type');
+
+function mat(color,emissive=0,rough=0.75,metal=0.1){
+  return new THREE.MeshStandardMaterial({color,emissive,roughness:rough,metalness:metal});
+}
+function box(w,h,d,m,x,y,z,name,type){
+  const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);
+  mesh.position.set(x,y,z);
+  mesh.castShadow=true; mesh.receiveShadow=true;
+  scene.add(mesh);
+  if(name){mesh.userData={name,type};interactives.push(mesh);}
+  return mesh;
+}
+function plane(w,d,m,x,y,z,ry=0){
+  const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,d),m);
+  mesh.rotation.x=-Math.PI/2; if(ry) mesh.rotation.z=ry;
+  mesh.position.set(x,y,z); mesh.receiveShadow=true;
+  scene.add(mesh); return mesh;
+}
+function label(text,x,y,z,s=0.9){
+  const cv=document.createElement('canvas'); cv.width=256; cv.height=64;
+  const ctx=cv.getContext('2d');
+  ctx.fillStyle='rgba(255,255,255,0.9)';
+  ctx.font=`bold ${Math.floor(s*20)}px sans-serif`;
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(text,128,32);
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),transparent:true,depthWrite:false}));
+  sp.position.set(x,y,z); sp.scale.set(7*s,1.8*s,1);
+  scene.add(sp);
+}
+function cylinder(rt,rb,h,seg,m,x,y,z){
+  const mesh=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg),m);
+  mesh.position.set(x,y,z); mesh.castShadow=true; scene.add(mesh); return mesh;
+}
+
+plane(400,400,mat(0x0b1020,0,0.95),0,-0.05,0);
+for(let i=-8;i<=8;i++){
+  plane(0.12,360,new THREE.MeshStandardMaterial({color:0x1a2a3a,opacity:0.3,transparent:true}),i*14,0.01,0);
+  plane(360,0.12,new THREE.MeshStandardMaterial({color:0x1a2a3a,opacity:0.3,transparent:true}),0,0.01,i*14);
+}
+
+function buildRunway(cx,cz,length,width,angle,id,label_text){
+  const rwMat=mat(0x0e1520,0,0.95);
+  const rw=new THREE.Mesh(new THREE.PlaneGeometry(width,length),rwMat);
+  rw.rotation.x=-Math.PI/2; rw.rotation.z=angle;
+  rw.position.set(cx,0.02,cz); rw.receiveShadow=true;
+  scene.add(rw);
+  rw.userData={name:id,type:'Runway'};
+  interactives.push(rw);
+
+  const clMat=new THREE.MeshStandardMaterial({color:0xffffff,opacity:0.55,transparent:true});
+  const numDashes=Math.floor(length/12);
+  for(let i=0;i<numDashes;i++){
+    const t=(i/(numDashes-1)-0.5)*length*0.88;
+    const lx=cx + t*Math.sin(angle);
+    const lz=cz + t*Math.cos(angle);
+    const dash=new THREE.Mesh(new THREE.PlaneGeometry(0.7,5),clMat);
+    dash.rotation.x=-Math.PI/2; dash.rotation.z=angle;
+    dash.position.set(lx,0.03,lz);
+    scene.add(dash);
+  }
+
+  const thrMat=new THREE.MeshStandardMaterial({color:0xffffff,opacity:0.5,transparent:true});
+  [-1,1].forEach(side=>{
+    for(let t=0;t<6;t++){
+      const ox=(t-2.5)*(width*0.12);
+      const endT=(side*0.45)*length;
+      const px=cx + endT*Math.sin(angle) + ox*Math.cos(angle);
+      const pz=cz + endT*Math.cos(angle) - ox*Math.sin(angle);
+      const tb=new THREE.Mesh(new THREE.PlaneGeometry(width*0.09,6),thrMat);
+      tb.rotation.x=-Math.PI/2; tb.rotation.z=angle;
+      tb.position.set(px,0.03,pz);
+      scene.add(tb);
+    }
+  });
+
+  const edgeMat=new THREE.MeshStandardMaterial({color:0xffffff,opacity:0.35,transparent:true});
+  [-1,1].forEach(side=>{
+    const ex=cx + side*(width/2+0.2)*Math.cos(angle);
+    const ez=cz - side*(width/2+0.2)*Math.sin(angle);
+    const el=new THREE.Mesh(new THREE.PlaneGeometry(0.3,length),edgeMat);
+    el.rotation.x=-Math.PI/2; el.rotation.z=angle;
+    el.position.set(ex,0.03,ez);
+    scene.add(el);
+  });
+
+  for(let i=-1;i<=1;i+=2){
+    const numL=Math.floor(length/18);
+    for(let j=0;j<numL;j++){
+      const t=(j/(numL-1)-0.5)*length*0.9;
+      const lx=cx + t*Math.sin(angle) + i*(width/2+3)*Math.cos(angle);
+      const lz=cz + t*Math.cos(angle) - i*(width/2+3)*Math.sin(angle);
+      const light=new THREE.PointLight(0x4444ff,0.08,12);
+      light.position.set(lx,0.5,lz);
+      scene.add(light);
+    }
+  }
+  label(label_text, cx+Math.sin(angle)*length*0.52, 2, cz+Math.cos(angle)*length*0.52, 0.7);
+}
+
+buildRunway(-90, 0,  200, 12, 0,          'Runway 09L/27R','09L / 27R');
+buildRunway(-60, 0,  200, 12, 0,          'Runway 09R/27L','09R / 27L');
+buildRunway(0,  -90, 200, 12, Math.PI/2,  'Runway 18L/36R','18L / 36R');
+buildRunway(0,  -60, 200, 12, Math.PI/2,  'Runway 18R/36L','18R / 36L');
+
+function buildTaxiway(points,id){
+  const txMat=new THREE.MeshStandardMaterial({color:0x0c1a28,opacity:0.9,transparent:true});
+  for(let i=0;i<points.length-1;i++){
+    const [x1,z1]=points[i], [x2,z2]=points[i+1];
+    const mx=(x1+x2)/2, mz=(z1+z2)/2;
+    const dx=x2-x1, dz=z2-z1;
+    const len=Math.sqrt(dx*dx+dz*dz);
+    const angle=Math.atan2(dx,dz);
+    const tw=new THREE.Mesh(new THREE.PlaneGeometry(6,len),txMat);
+    tw.rotation.x=-Math.PI/2; tw.rotation.z=angle;
+    tw.position.set(mx,0.015,mz); tw.receiveShadow=true;
+    scene.add(tw);
+    const ylMat=new THREE.MeshStandardMaterial({color:0xaaaa00,opacity:0.4,transparent:true});
+    const yl=new THREE.Mesh(new THREE.PlaneGeometry(0.3,len),ylMat);
+    yl.rotation.x=-Math.PI/2; yl.rotation.z=angle;
+    yl.position.set(mx,0.025,mz);
+    scene.add(yl);
+  }
+}
+buildTaxiway([[-90,50],[-30,50],[-30,80],[30,80],[30,50],[90,50]],'Taxiway Alpha');
+buildTaxiway([[-90,-50],[-30,-50],[-30,-80],[30,-80],[30,-50],[90,-50]],'Taxiway Bravo');
+buildTaxiway([[-50,-90],[-50,0],[-50,90]],'Taxiway Charlie');
+buildTaxiway([[50,-90],[50,0],[50,90]],'Taxiway Delta');
+
+const apronMat=mat(0x0d1828,0,0.9);
+plane(60,40,apronMat,-38,0.01,65);
+plane(60,40,apronMat,38,0.01,65);
+plane(60,40,apronMat,-38,0.01,-65);
+plane(60,40,apronMat,38,0.01,-65);
+
+function buildTerminal(ox,termLabel){
+  const hubM=mat(0x111c2e,0x050a18,0.85,0.05);
+  const roofM=mat(0x1a2840,0x04080f,0.7,0.15);
+  const glassM=new THREE.MeshStandardMaterial({color:0x4488cc,roughness:0.1,metalness:0.8,transparent:true,opacity:0.5,emissive:0x0f2a88,emissiveIntensity:0.2});
+
+  box(36,4,16,hubM,ox,2,0,termLabel+' Landside Hub','Landside / Arrivals');
+  box(36,0.25,16,roofM,ox,4.13,0,null,null);
+  box(34,5,20,mat(0x141f30,0x06101e,0.8,0.08),ox,2.5,18,null,null);
+  box(34,0.3,20,roofM,ox,5.15,18,null,null);
+  [[-16,0],[-8,0],[0,0],[8,0],[16,0]].forEach(([cx])=>cylinder(0.35,0.35,5,8,mat(0x2a3d55,0x0a1830,0.6,0.2),ox+cx,2.5+18,18));
+  box(34,5,0.2,glassM,ox,2.5+18,8+18,null,null);
+  box(34,5,0.2,glassM,ox,2.5+18,-2+18,null,null);
+
+  const concM=mat(0x0f1a2e,0x04080e,0.85,0.05);
+  box(10,3,52,concM,ox,1.5,36,null,null);
+  box(10,0.2,52,roofM,ox,3.1,36,null,null);
+
+  const gateM=mat(0x378ADD,0x0a2255,0.5,0.3);
+  const gN=termLabel==='T1'?['Gate 1','Gate 2','Gate 3','Gate 4','Gate 5']:['Gate 6','Gate 7','Gate 8','Gate 9','Gate 10'];
+  [-20,-10,0,10,20].forEach((gz,i)=>{
+    box(7,2,5,gateM,ox+13,1.8+36,gz+36,gN[i],'Boarding Gate');
+    box(7,1,1,mat(0x1a2c44,0x030a14,0.8,0.1),ox+9,1.2+36,gz+36,null,null);
+    label(gN[i],ox+13,4.5+36,gz+36,0.6);
+  });
+
+  box(13,2.5,5,mat(0x444,0x1a0500,0.7,0.1),ox,1.25+36,36+28,'Security Check A','Security Checkpoint');
+  box(13,2.5,5,mat(0x444,0x1a0500,0.7,0.1),ox,1.25+36,36-28,'Security Check B','Security Checkpoint');
+
+  const dPos=[{x:-11,z:11,n:'McDonald\'s',t:'Fast food'},{x:-4,z:11,n:'Starbucks',t:'Café'},{x:3,z:11,n:termLabel==='T1'?'Italian Kitchen':'Asian Fusion',t:'Restaurant'}];
+  dPos.forEach(({x,z,n,t})=>{
+    box(5.5,3,6,mat(0x1D9E75,0x062a18,0.6,0.1),ox+x,1.5+18,z+18,n,t);
+    label(n,ox+x,4.5+18,z+18,0.5);
+  });
+
+  const rPos=[{x:10,z:11,n:'Zara',t:'Fashion'},{x:15,z:11,n:termLabel==='T1'?'Apple Store':'Croma',t:'Electronics'},{x:10,z:2,n:termLabel==='T1'?'Rolex':'Casio',t:'Watches'},{x:15,z:2,n:'Duty Free',t:'Duty free'}];
+  rPos.forEach(({x,z,n,t})=>{
+    box(4.5,3,5,mat(0x7F77DD,0x0a0855,0.55,0.2),ox+x,1.5+18,z+18,n,t);
+    label(n,ox+x,4.2+18,z+18,0.5);
+  });
+
+  [{x:-11,z:-4,n:'Washroom',c:0xBA7517},{x:-6,z:-4,n:'ATM',c:0xD85A30},{x:0,z:-4,n:'Prayer Room',c:0xBA7517},{x:6,z:-4,n:'Pharmacy',c:0xD85A30}].forEach(({x,z,n,c})=>{
+    box(3.5,2.5,3.5,mat(c,0x0a0500,0.7,0.05),ox+x,1.25+18,z+18,n,'Amenity / Service');
+    label(n,ox+x,3.8+18,z+18,0.45);
+  });
+
+  box(9,3.5,7,mat(0xD4537E,0x330818,0.5,0.2),ox-13,1.75+18,9+18,'Premium Lounge','Lounge');
+  label('Lounge',ox-13,5.5+18,9+18,0.6);
+  box(3.5,2,3.5,mat(0xD85A30,0x2a0a00,0.65,0.1),ox-13,1+18,-5+18,'Special Assistance','Wheelchair / Assistance');
+  box(4,1,3,mat(0x1a3a55,0x050e18,0.8,0.1),ox-10,0.5+2,-8,'Baggage Belt '+termLabel,'Baggage Claim');
+  label(termLabel,ox,11,18,1.1);
+
+  const ptL=new THREE.PointLight(0x4488ff,0.5,45);
+  ptL.position.set(ox,16,18); scene.add(ptL);
+}
+
+buildTerminal(-32,'T1');
+buildTerminal(32,'T2');
+
+const trainM=mat(0x185FA5,0x0a2255,0.5,0.4);
+box(5,3,70,trainM,0,3+18,18,'Inter-Terminal Train','Terminal Connector');
+const trainRoofM=new THREE.MeshStandardMaterial({color:0x378ADD,roughness:0.2,metalness:0.6,transparent:true,opacity:0.55,emissive:0x0a2a88,emissiveIntensity:0.2});
+box(5.4,0.28,70,trainRoofM,0,4.64+18,18,null,null);
+for(let ti=-3;ti<=3;ti++){
+  const wm=new THREE.MeshStandardMaterial({color:0x4488cc,roughness:0.05,metalness:0.9,transparent:true,opacity:0.5,emissive:0x1133aa,emissiveIntensity:0.25});
+  box(0.1,2.5,6,wm,-2.4,3+18,ti*10+18,null,null);
+  box(0.1,2.5,6,wm,2.4,3+18,ti*10+18,null,null);
+}
+label('Inter-Terminal Train',0,9+18,18,0.7);
+
+const raycaster=new THREE.Raycaster();
+const mouse=new THREE.Vector2();
+let hovered=null;
+function onMove(e){
+  const rect=canvas.getBoundingClientRect();
+  mouse.x=((e.clientX-rect.left)/rect.width)*2-1;
+  mouse.y=-((e.clientY-rect.top)/rect.height)*2+1;
+  raycaster.setFromCamera(mouse,camera);
+  const hits=raycaster.intersectObjects(interactives);
+  if(hits.length>0){
+    const obj=hits[0].object;
+    if(hovered!==obj){
+      if(hovered) hovered.material.emissiveIntensity=hovered._oe||0.05;
+      hovered=obj;
+      hovered._oe=hovered.material.emissiveIntensity||0.05;
+      hovered.material.emissiveIntensity=0.55;
+    }
+    ttN.textContent=obj.userData.name;
+    ttT.textContent=obj.userData.type;
+    tt.style.display='block';
+    tt.style.left=(e.clientX-canvas.getBoundingClientRect().left+14)+'px';
+    tt.style.top=(e.clientY-canvas.getBoundingClientRect().top-40)+'px';
+  } else {
+    if(hovered){hovered.material.emissiveIntensity=hovered._oe||0.05;hovered=null;}
+    tt.style.display='none';
+  }
+}
+canvas.addEventListener('mousemove',onMove);
+
+let drag=false,px=0,py=0;
+let th=0.2,ph=0.78,rad=190,tTh=0.2,tPh=0.78,tRad=190;
+canvas.addEventListener('mousedown',e=>{drag=true;px=e.clientX;py=e.clientY;});
+window.addEventListener('mouseup',()=>drag=false);
+window.addEventListener('mousemove',e=>{
+  if(!drag)return;
+  tTh-=(e.clientX-px)*0.008; tPh=Math.max(0.12,Math.min(1.35,tPh+(e.clientY-py)*0.006));
+  px=e.clientX;py=e.clientY;
+});
+canvas.addEventListener('wheel',e=>{e.preventDefault();tRad=Math.max(55,Math.min(300,tRad+e.deltaY*0.35));},{passive:false});
+
+function animate(){
+  requestAnimationFrame(animate);
+  th+=(tTh-th)*0.08;ph+=(tPh-ph)*0.08;rad+=(tRad-rad)*0.08;
+  camera.position.set(rad*Math.sin(th)*Math.sin(ph),rad*Math.cos(ph),rad*Math.cos(th)*Math.sin(ph));
+  camera.lookAt(0,10,18);
+  renderer.render(scene,camera);
+}
+animate();
+
+window.addEventListener('resize',()=>{
+  const W2=canvas.parentElement.clientWidth,H2=canvas.parentElement.clientHeight;
+  camera.aspect=W2/H2;camera.updateProjectionMatrix();renderer.setSize(W2,H2);
+});
+})();
+</script>
