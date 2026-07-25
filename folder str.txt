@@ -27,6 +27,7 @@ ai_airport_companion/
 │   │   │   ├── nodes/
 │   │   │   │   ├── router_node.py            # Intent classification
 │   │   │   │   ├── llm_node.py               # Gemini interaction
+│   │   │   │   ├── static_nodes.py           # Negative intent side after intent classification
 │   │   │   │   ├── tool_node.py              # Tool execution
 │   │   │   │   ├── stt_node.py               # Speech transcription
 │   │   │   │   └── tts_node.py               # Speech synthesis
@@ -40,8 +41,7 @@ ai_airport_companion/
 │   │   │   ├── flight_tool.py                # Flight information
 │   │   │   ├── wayfinding_tool.py            # Airport navigation
 │   │   │   ├── qdrant_search_tool.py         # Policy retrieval
-│   │   │   ├── reminder_tool.py              # Reminder scheduling
-│   │   │   └── special_assistance_tool.py    # Accessibility services
+│   │   │   └── reminder_tool.py              # Reminder scheduling
 │   │   │
 │   │   ├── services/
 │   │   │   ├── flight_generator.py           # Mock AviationStack
