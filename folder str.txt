@@ -27,6 +27,7 @@ ai_airport_companion/
 │   │   │   ├── nodes/
 │   │   │   │   ├── router_node.py            # Intent classification
 │   │   │   │   ├── llm_node.py               # Gemini interaction
+│   │   │   │   ├── static_nodes.py           # Negative intent side after intent classification
 │   │   │   │   ├── tool_node.py              # Tool execution
 │   │   │   │   ├── stt_node.py               # Speech transcription
 │   │   │   │   └── tts_node.py               # Speech synthesis
