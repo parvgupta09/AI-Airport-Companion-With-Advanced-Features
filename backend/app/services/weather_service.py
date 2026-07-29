@@ -11,7 +11,7 @@ class WeatherService:
         self.enabled = bool(self.api_key)
         self.base_url = "https://api.openweathermap.org/data/2.5/weather"
 
-    def get_wether_for_destination(self, destination: str) -> str:
+    def get_weather_for_destination(self, destination: str) -> str:
         if not self.enabled:
             logger.info(f"Fetching simulated weather for {destination}")
             return "Sunny, 25 degrees Celsius with clear skies."

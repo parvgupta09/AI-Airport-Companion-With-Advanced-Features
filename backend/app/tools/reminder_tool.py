@@ -34,7 +34,7 @@ def schedule_passenger_reminder(user_id: str, task_description: str, minutes_fro
         db.commit()
 
         time_str = trigger_time.strftime("%H:%M UTC")
-        logger.info("Scheduled reminder for user {user_id} at time {time_str}")
+        logger.info(f"Scheduled reminder for user {user_id} at time {time_str}")
 
         return(
             f"Successfully scheduled a reminder for: '{task_description}'. "

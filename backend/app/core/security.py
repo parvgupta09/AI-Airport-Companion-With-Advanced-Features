@@ -22,7 +22,7 @@ def create_magic_link_token(user_id: str, flight_id: str, departure_time_utc: da
         "type": "magic_link",
         "nbf": activation_time,
         "exp": expiration_time,
-        "iat": datetime.utcnow(timezone.utc)
+        "iat": datetime.now(timezone.utc)
     }
     return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
@@ -30,7 +30,7 @@ def create_magic_link_token(user_id: str, flight_id: str, departure_time_utc: da
 def create_session_token(user_id: str, flight_id: str, thread_id: str, departure_time_utc: datetime) -> str:
     """
     Create the active session JWT for the websocket chat connection.
-    Issued only after the magic link has been verififed.
+    Issued only after the magic link has been verified.
     """
 
     expiration_time = departure_time_utc + timedelta(hours=24)

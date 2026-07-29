@@ -57,12 +57,12 @@ class QdrantService:
 
     def upsert_document(self, doc_id: str, vector: list[float], text_content: str, metadata: dict = None):
 
-        payload = {"text", text_content}
+        payload = {"text": text_content}
 
         if metadata:
             payload.update(metadata)
 
-        self.client_upsert(
+        self.client.upsert(
             collection_name = self.collection_name,
             points = [
                 models.PointStruct(
