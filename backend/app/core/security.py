@@ -9,38 +9,48 @@ import jwt
 from app.core.config import JWT_SECRET, JWT_ALGORITHM
 
 
-def create_magic_link_token(user_id: str, flight_id: str, departure_time_utc: datetime) -> str:
+def create_magic_link_token(user_id: str, flight_id: str, departure_time_utc: datetime, arrival_time_utc: datetime) -> str:
     """
     Create the JWT embedded in the email/sms magic link.
     """
 
+    now = datetime.now(timezone.utc)
     activation_time = departure_time_utc - timedelta(hours=4)
-    expiration_time = departure_time_utc + timedelta(hours=24)
+    expiration_time = departure_time_utc + timedelta(hours=6)
+
+    nbf_time = min(now, activation_time)
+
     payload = {
         "sub": user_id,
         "flight_id": str(flight_id),
         "type": "magic_link",
-        "nbf": activation_time,
-        "exp": expiration_time,
+        "nbf": int(nbf_time.timestamp()),
+        "exp": int(expiration_time.timestamp()),
         "iat": datetime.now(timezone.utc)
     }
     return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
 
-def create_session_token(user_id: str, flight_id: str, thread_id: str, departure_time_utc: datetime) -> str:
+def create_session_token(user_id: str, flight_id: str, thread_id: str, departure_time_utc: datetime, arrival_time_utc: datetime) -> str:
     """
     Create the active session JWT for the websocket chat connection.
     Issued only after the magic link has been verified.
     """
 
-    expiration_time = departure_time_utc + timedelta(hours=24)
+    now = datetime.now(timezone.utc)
+    activation_time = departure_time_utc - timedelta(hours=4)
+    expiration_time = arrival_time_utc + timedelta(hours=6)
+
+    nbf_time = min(activation_time, now)
+
     payload = {
         "sub" : user_id,
         "flight_id" : str(flight_id),
         "thread_id" : str(thread_id),
         "type" : "session",
-        "exp" : expiration_time,
-        "iat" : datetime.utcnow(timezone.utc)
+        "nbf" : int(nbf_time.timestamp()),
+        "exp" : int(expiration_time.timestamp()),
+        "iat" : int(now.timestamp())
     }
     return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
