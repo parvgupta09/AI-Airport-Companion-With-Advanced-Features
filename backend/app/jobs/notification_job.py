@@ -5,13 +5,17 @@ import logging
 import json
 import asyncio
 import uuid
+from datetime import datetime, timezone, timedelta
 from sqlalchemy.orm import Session
 from app.core.redis_client import get_redis
+from app.core.config import FRONTEND_URL
+from app.core.security import create_magic_link_token
 from app.core.websocket_manager import manager
 from app.database.postgres_session import SessionLocal
-from app.database.postgres_models import User
+from app.database.postgres_models import User, Flight
 from app.services.email_service import email_service
 from app.services.sms_service import sms_service
+from app.services.weather_service import weather_service
 
 logger = logging.getLogger(__name__)
 
@@ -118,3 +122,83 @@ async def start_notification_listener() -> None:
 
     except Exception as e:
         logger.error(f"Critical error in Redis notification listener: {str(e)}", exc_info=True)
+
+
+async def dispatch_due_magic_links() -> None:
+    """
+    Runs automatically after every 15mins.
+    Finds the flights boarding within the next 24hrs where magic_link_send == False
+    """
+
+    db: Session = SessionLocal()
+
+    try:
+        now = datetime.now(timezone.utc)
+        window_start = now + timedelta(hours=24)
+
+        due_flights = (
+            db.query(Flight).filter(Flight.magic_link_sent==False, Flight.boarding_time_utc <= window_start, Flight.boarding_time_utc > now).all()
+        )
+
+        if not due_flights:
+            return
+
+        logger.info(f"Found {len(due_flights)} flight(s) entering the 24hr wondow. Dispatching magic links...")
+
+        for flight in due_flights:
+            if not flight.user:
+                continue
+
+            magic_token = create_magic_link_token(
+                user_id = str(flight.user_id),
+                flight_id = str(flight.flight_id),
+                departure_time_utc=flight.departure_time_utc,
+                arrival_time_utc=flight.arrival_time_utc
+            )
+
+            frontend_verify_url = f"{FRONTEND_URL}/verify?token={magic_token}"
+            destination_weather = weather_service.get_weather_for_destination(flight.destination)
+
+            html_content = (
+                f"<h3>Your Airport Companion Magic Link</h3>"
+                f"<p>Hello <b>{flight.user.name}</b>,</p>"
+                f"<p>Your flight <b>{flight.flight_number}</b> ({flight.source} &rarr; {flight.destination}) is boarding soon!</p>"
+                f"<p><b>Destination Weather Update:</b> {destination_weather} (Pack accordingly!)</p>"
+                f"<p>Click the button below to access your live AI assistant and terminal companion:</p>"
+                f"<p><a href='{frontend_verify_url}' style='background:#0052cc;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;'>Open Airport Companion</a></p>"
+                f"<p><i>Note: Interactive chat unlocks exactly 4 hours prior to your scheduled departure time.</i></p>"
+            )
+
+            sms_body = (
+                f"AI Companion Check-In for flight {flight.flight_number}: {frontend_verify_url}"
+                f"Weather in {flight.destination}: {destination_weather}"
+            )
+
+            try:
+                await asyncio.gather(
+                    asyncio.to_thread(
+                        email_service.send_email,
+                        to_email=flight.user.email,
+                        subject=f"Check-in link : Flight {flight.flight_number} to {flight.destination}",
+                        html_content=html_content
+                    ),
+                    asyncio.to_thread(
+                        sms_service.send_message,
+                        to_phone=flight.user.phone_number,
+                        body=sms_body
+                    ),
+                )
+
+                flight.magic_link_sent = True
+                logger.info(f"Auto-dispatched 24hrs magic link for PNR {flight.pnr} to {flight.user.email}")
+
+            except Exception as dispatch_err:
+                logger.error(f"Failed to auto-dispatch link for PNR {flight.pnr}: {str(dispatch_err)}")
+
+        db.commit()
+
+    except Exception as e:
+        logger.error(f"Error in automatic 24hr magic link dispatcher job: {str(e)}")
+        db.rollback()
+    finally:
+        db.close()

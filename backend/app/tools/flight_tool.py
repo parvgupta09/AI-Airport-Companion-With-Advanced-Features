@@ -31,19 +31,26 @@ def get_flight_status(flight_number: str) -> str:
         terminal_info = flight.terminal.name if flight.terminal else "Not assigned yet"
         layover_info = f"Yes, at {flight.layover_airport}" if flight.has_layover else "No"
 
+        layover_info = (
+            f"YES - Connecting stop at {flight.layover_airport} before continuing to final destination {flight.destination}"
+            if flight.has_layover
+            else "No layover (Direct Flight)"
+        )
+
         return (
             f"--- FLIGHT MANIFEST FOR {flight.flight_number} ---\n"
-            f"Route: {flight.source} -> {flight.destination} ({'International' if flight.is_international else 'Domestic'})\n"
+            f"Origin Airport (Current Departure): {flight.source}\n"
+            f"Final Destination Airport: {flight.destination}\n"
+            f"Flight Type: {'International' if flight.is_international else 'Domestic'}\n"
             f"Airline: {flight.airline} | Aircraft: {flight.aircraft}\n"
-            f"Status: {status_name} (Delayed by: {flight.delay_minutes} minutes)\n"
+            f"Status: {status_name} (Delay: {flight.delay_minutes} minutes)\n"
             f"Departure Location: Terminal {terminal_info}, Gate {gate_info}\n"
             f"Gate Changed Recently: {'Yes' if flight.gate_changed else 'No'}\n"
             f"Boarding Announced: {'Yes' if flight.boarding_announced else 'No'}\n\n"
-            f"--- TIME SCHEDULE ---\n"
-            f"Delay Duration: {flight.delay_minutes} minutes\n"
-            f"New Boarding (if delay): {flight.boarding_time_utc}\n"
-            f"New Departure (if delay): {flight.departure_time_utc}\n"
-            f"Arrival Time: {flight.arrival_time_utc}\n\n"
+            f"--- SCHEDULED TIMINGS (UTC) ---\n"
+            f"Boarding Time: {flight.boarding_time_utc}\n"
+            f"Departure Time: {flight.departure_time_utc}\n"
+            f"Final Destination Scheduled Arrival: {flight.arrival_time_utc}\n\n"
             f"--- POST-FLIGHT & CONNECTIONS ---\n"
             f"Baggage Claim: Belt {flight.baggage_belt or 'Not Assigned Yet'}\n"
             f"Connecting/Layover Flight: {layover_info}\n"

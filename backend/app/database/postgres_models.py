@@ -72,6 +72,8 @@ class Flight(Base):
     id = Column(UUID(as_uuid=True), primary_key = True, default = uuid.uuid4)
     user_id = Column(UUID(as_uuid = True), ForeignKey("users.id"), nullable = False)
 
+    magic_link_sent = Column(Boolean, default = False)
+
     pnr = Column(String, nullable = False)
     leg_number = Column(Integer, nullable = False, default = 1)
     source = Column(String, nullable = False)
