@@ -5,7 +5,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.database.postgres_session import engine
-from app.database.postgres_models import Base
+from app.database.postgres_models import (
+    Base,
+    User,
+    Flight,
+    RetailerUser,
+    RetailerOffer,
+    Reminder,
+)
 from app.core.config import FRONTEND_URL
 
 from app.api import auth_routes, flights_routes, chat_routes, admin_routes
@@ -18,6 +25,10 @@ except:
 
 logging.basicConfig(level = logging.INFO, format = "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",)
 logger = logging.getLogger("airport_companion_api")
+
+logging.getLogger("apscheduler").setLevel(logging.WARNING)
+logging.getLogger("apscheduler.executors.default").setLevel(logging.WARNING)
+logging.getLogger("httpcore").setLevel(logging.WARNING)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -69,16 +80,16 @@ app = FastAPI(
 allowed_origins = [
     "http://localhost:5173",
     "http://localhost:3000",
-    "http://127.0.0.1.5173",
+    "http://127.0.0.1:5173",
 ]
 
-app.add_middleware = [
+app.add_middleware(
     CORSMiddleware,
-    allowed_origins = allowed_origins,
+    allow_origins = allowed_origins,
     allow_credentials = True,
     allow_methods = ["*"],
     allow_headers = ["*"],
-]
+)
 
 app.include_router(auth_routes.router)
 app.include_router(flights_routes.router)

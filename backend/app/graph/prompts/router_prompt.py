@@ -1,4 +1,4 @@
-from langchain_core.prompts import ChatMessagePromptTemplate, MessagesPlaceholder
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 ROUTER_SYSTEM_PROMPT = """You are the security and routing classifier for an autonomous airport AI companion.
 Your ONLY responsibility is to categorize the user's latest message into exactly one of four categories. 
@@ -22,7 +22,7 @@ CATEGORIES & RULES:
 Categorize strictly based on these rules.
 """
 
-router_prompt_template = ChatMessagePromptTemplate([
-    ("system", ROUTER_SYSTEM_PROMPT),
-    MessagesPlaceholder(variable_name = "messages")
+router_prompt_template = ChatPromptTemplate.from_messages([
+   ("system", ROUTER_SYSTEM_PROMPT),
+   MessagesPlaceholder(variable_name = "messages")
 ])

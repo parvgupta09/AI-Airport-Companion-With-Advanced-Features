@@ -3,6 +3,7 @@ from langchain.tools import tool
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_qdrant import QdrantVectorStore
 from app.core.config import GEMINI_API_KEY, QDRANT_URL, QDRANT_API_KEY, QDRANT_COLLECTION_NAME
+from qdrant_client import QdrantClient
 
 logger = logging.getLogger(__name__)
 
@@ -12,13 +13,18 @@ try:
         google_api_key = GEMINI_API_KEY
     )
 
-    vector_store = QdrantVectorStore(
-        embedding = embeddings,
+    client = QdrantClient(
         url = QDRANT_URL,
         api_key = QDRANT_API_KEY,
-        collection_name = QDRANT_COLLECTION_NAME,
         timeout = 200.0
     )
+
+    vector_store = QdrantVectorStore(
+        client = client,
+        embedding = embeddings,
+        collection_name = QDRANT_COLLECTION_NAME,
+    )
+    
 except Exception as e:
     logger.error(f"Failed to initialize Qdrant Vector Store: {str(e)}")
     vector_store = None

@@ -84,6 +84,7 @@ class Flight(Base):
 
     has_layover = Column(Boolean, default = False)
     layover_airport = Column(String, nullable = True)
+    layover_duration_minutes = Column(Integer, default=0, nullable=False)
 
     departure_time_utc = Column(DateTime, nullable = False)
     arrival_time_utc = Column(DateTime, nullable = False)

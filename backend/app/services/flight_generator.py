@@ -74,11 +74,12 @@ class FlightGenerator:
     def _calculate_boarding_time(self, departure_time: datetime) -> datetime:
         return departure_time - timedelta(minutes=45)
     
-    def _calculate_arrival_time(self, departure_time: datetime, is_international: bool, rng: random.Random)-> datetime:
-        if is_international:
-            duration = timedelta(hours = rng.randint(5, 10), minutes=rng.choice([0, 15, 30, 45]))
+    def _calculate_arrival_time(self, departure_time: datetime, has_layover: bool) -> datetime:
+        if has_layover:
+            duration = timedelta(hours=8)
         else:
-            duration = timedelta(hours = rng.randint(1,3), minutes=rng.choice([0,20,30,40, 50]))
+            duration = timedelta(hours=3)
+
         return departure_time + duration
     
     def _generate_layover(self, source: str, destination: str, rng: random.Random) -> Tuple[bool, Optional[str]]:
@@ -100,12 +101,13 @@ class FlightGenerator:
         gate = self._assign_gate(terminal, rng)
         baggage_belt = self._assign_baggage_belt(terminal, rng)
         boarding_time = self._calculate_boarding_time(departure_time)
-        arrival_time = self._calculate_arrival_time(departure_time, is_international, rng)
         
         if allow_layover:
             has_layover, layover_airport = self._generate_layover(source, destination, rng)
         else:
             has_layover, layover_airport = False, None
+
+        arrival_time = self._calculate_arrival_time(departure_time, has_layover)
 
         return {
             "pnr": pnr,
@@ -130,6 +132,7 @@ class FlightGenerator:
             "status": FlightStatus.SCHEDULED,
             "has_layover": has_layover,
             "layover_airport": layover_airport,
+            "layover_duration_minutes": 120 if has_layover else 0,
             "is_international": is_international,
             "thread_id": None
         }

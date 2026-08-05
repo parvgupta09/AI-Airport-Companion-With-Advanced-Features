@@ -20,7 +20,7 @@ from app.database.postgres_models import Flight
 from app.core.security import verify_token
 from app.core.websocket_manager import manager
 from app.graph.graph import airport_graph
-from app.services.stt_service import stt_service
+# from app.services.stt_service import stt_service
 
 logger = logging.getLogger(__name__)
 

@@ -104,7 +104,6 @@ async def request_magic_link(payload:MagicLinkRequest, db:Session=Depends(get_db
 
     sms_body = (
         f"AI Companion Check-In for flight {flight.flight_number} : {frontend_verify_url}"
-        f"Weather in {flight.destination}: {destination_weather}"
     )
 
     email_sent, sms_sent = await asyncio.gather(

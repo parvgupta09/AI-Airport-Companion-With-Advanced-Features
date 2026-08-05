@@ -11,6 +11,8 @@ def _require(key: str) -> str:
     return value
 
 DATABASE_URL = _require("DATABASE_URL")
+REDIS_URL = _require("REDIS_URL")
+
 
 QDRANT_API_KEY = _require("QDRANT_API_KEY")
 QDRANT_URL = _require("QDRANT_URL")
