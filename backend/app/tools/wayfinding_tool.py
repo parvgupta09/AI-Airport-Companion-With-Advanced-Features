@@ -5,8 +5,8 @@ import logging
 from datetime import datetime, timezone
 from langchain_core.tools import tool
 from sqlalchemy.orm import Session
-from app.database.postgres_models import SessionLocal
-from app.database.postgres_session import RetailerOffer
+from app.database.postgres_session import SessionLocal
+from app.database.postgres_models import RetailerOffer
 
 logger = logging.getLogger(__name__)
 

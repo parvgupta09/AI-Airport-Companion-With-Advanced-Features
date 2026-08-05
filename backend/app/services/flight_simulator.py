@@ -119,7 +119,7 @@ class FlightSimulator:
 
             modified = True
 
-        # Status checks in chrological order
+        # Status checks in chronological order
 
         if now >= arrival_time + timedelta(minutes=90):
             if flight.status != FlightStatus.COMPLETED:

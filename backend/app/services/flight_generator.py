@@ -51,10 +51,10 @@ class FlightGenerator:
     
     def _choose_aircraft(self, is_international: bool, rng: random.Random) -> str:
         if is_international:
-            aircaft = [p for p in AIRCRAFT_DATA if p["type"] == "Wide Body"]
+            aircraft = [p for p in AIRCRAFT_DATA if p["type"] == "Wide Body"]
         else:
-            aircaft = [p for p in AIRCRAFT_DATA if p["type"] == "Narrow Body"]
-        return rng.choice(aircaft)["model"]
+            aircraft = [p for p in AIRCRAFT_DATA if p["type"] == "Narrow Body"]
+        return rng.choice(aircraft)["model"]
     
     def _assign_terminal(self, is_international: bool) -> TerminalCode:
         return TerminalCode.T2 if is_international else TerminalCode.T1

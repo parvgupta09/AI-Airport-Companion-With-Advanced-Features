@@ -1,6 +1,6 @@
 import uuid
 import enum
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import (
     Column,
@@ -60,7 +60,7 @@ class User(Base):
     name = Column(String, nullable = False)
     email = Column(String, unique = True, nullable = False)
     phone_number = Column(String, nullable = True)
-    created_at = Column(DateTime, default = datetime.utcnow)
+    created_at = Column(DateTime, default = datetime.now(timezone.utc))
 
     flights = relationship("Flight", back_populates="user", cascade="all, delete-orphan")
     reminders = relationship("Reminder", back_populates="user", cascade="all, delete-orphan")
@@ -71,6 +71,8 @@ class Flight(Base):
 
     id = Column(UUID(as_uuid=True), primary_key = True, default = uuid.uuid4)
     user_id = Column(UUID(as_uuid = True), ForeignKey("users.id"), nullable = False)
+
+    magic_link_sent = Column(Boolean, default = False)
 
     pnr = Column(String, nullable = False)
     leg_number = Column(Integer, nullable = False, default = 1)

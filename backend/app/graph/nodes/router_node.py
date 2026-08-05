@@ -18,6 +18,8 @@ class RouteDecision(BaseModel):
 
 def route_user_message(state: AgentState) -> str:
     """
+    Evaluates the user's recent chat history to determine the intent of the user's latest message.
+    Returns a string (the intent) which will be used by the graph's conditional edges to route the flow.
     """
 
     recent_messages = state["messages"][-4:]

@@ -1,14 +1,19 @@
 import logging
+import json
+import time
 from datetime import datetime, timedelta, timezone
 from langchain_core.tools import tool
 from sqlalchemy.orm import Session
 from app.database.postgres_session import SessionLocal
 from app.database.postgres_models import Reminder
+from app.core.redis_client import redis_pool
 
 logger = logging.getLogger(__name__)
 
+REMINDER_ZSET_KEY = "airport:delayed_reminders"
+
 @tool
-def schedule_passenger_reminder(user_id: str, task_description: str, minutes_from_now: int) -> str:
+async def schedule_passenger_reminder(user_id: str, task_description: str, minutes_from_now: int) -> str:
     """
     Schedules an alert for the passenger.
 
@@ -22,6 +27,7 @@ def schedule_passenger_reminder(user_id: str, task_description: str, minutes_fro
 
     try:
         trigger_time = datetime.now(timezone.utc) + timedelta(minutes = minutes_from_now)
+        trigger_ts = time.time() + (minutes_from_now * 60) 
 
         new_reminder = Reminder(
             user_id = user_id,
@@ -32,9 +38,17 @@ def schedule_passenger_reminder(user_id: str, task_description: str, minutes_fro
 
         db.add(new_reminder)
         db.commit()
+        db.refresh(new_reminder)
+
+        redis_payload = json.dumps({
+            "id" : new_reminder.id,
+            "user_id" : user_id,
+            "task_description" : task_description
+        })
+        await redis_pool.zadd(REMINDER_ZSET_KEY, {redis_payload: trigger_ts})
 
         time_str = trigger_time.strftime("%H:%M UTC")
-        logger.info("Scheduled reminder for user {user_id} at time {time_str}")
+        logger.info(f"Scheduled reminder for user {user_id} at time {time_str}")
 
         return(
             f"Successfully scheduled a reminder for: '{task_description}'. "

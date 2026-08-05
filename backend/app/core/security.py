@@ -5,42 +5,66 @@ Handles all the JWT operations for the magic link authentication flow.
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict, Any
 import jwt
+from passlib.context import CryptContext
 
 from app.core.config import JWT_SECRET, JWT_ALGORITHM
 
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-def create_magic_link_token(user_id: str, flight_id: str, departure_time_utc: datetime) -> str:
+def get_passoword_hash(password: str) -> str:
+    """
+    Returns a secure brcypt hash of the plaintext password
+    """
+    return pwd_context.hash(password)
+
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """
+    Verifies a plaintext password against the stored bcrypt hash
+    """
+    return pwd_context.verify(plain_password, hashed_password)
+
+
+def create_magic_link_token(user_id: str, flight_id: str, departure_time_utc: datetime, arrival_time_utc: datetime) -> str:
     """
     Create the JWT embedded in the email/sms magic link.
     """
 
+    now = datetime.now(timezone.utc)
     activation_time = departure_time_utc - timedelta(hours=4)
-    expiration_time = departure_time_utc + timedelta(hours=24)
+    expiration_time = arrival_time_utc + timedelta(hours=8)
+
     payload = {
         "sub": user_id,
         "flight_id": str(flight_id),
         "type": "magic_link",
-        "nbf": activation_time,
-        "exp": expiration_time,
-        "iat": datetime.utcnow(timezone.utc)
+        "nbf": int(activation_time.timestamp()),
+        "exp": int(expiration_time.timestamp()),
+        "iat": datetime.now(timezone.utc)
     }
     return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
 
-def create_session_token(user_id: str, flight_id: str, thread_id: str, departure_time_utc: datetime) -> str:
+def create_session_token(user_id: str, flight_id: str, thread_id: str, departure_time_utc: datetime, arrival_time_utc: datetime) -> str:
     """
     Create the active session JWT for the websocket chat connection.
-    Issued only after the magic link has been verififed.
+    Issued only after the magic link has been verified.
     """
 
-    expiration_time = departure_time_utc + timedelta(hours=24)
+    now = datetime.now(timezone.utc)
+    activation_time = departure_time_utc - timedelta(hours=4)
+    expiration_time = arrival_time_utc + timedelta(hours=6)
+
+    nbf_time = min(activation_time, now)
+
     payload = {
         "sub" : user_id,
         "flight_id" : str(flight_id),
         "thread_id" : str(thread_id),
         "type" : "session",
-        "exp" : expiration_time,
-        "iat" : datetime.utcnow(timezone.utc)
+        "nbf" : int(nbf_time.timestamp()),
+        "exp" : int(expiration_time.timestamp()),
+        "iat" : int(now.timestamp())
     }
     return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
@@ -67,10 +91,15 @@ def verify_token(token: str, expected_type: str) -> Dict[str, Any]:
         return {"valid": False, "error": "Invalid Token"}
 
 
-def extract_user_and_flight(token:str , expected_type: str= "session") -> Optional[tuple]:
-    
+def extract_user_and_flight(token:str , expected_type: str= "session") -> Optional[tuple[str,str]]:
+    """
+    Quick helper function for the Websocket and REST dependency injection.
+    Returns (user_id, flight_id) if vlaid, else None
+    """
+
     result = verify_token(token, expected_type)
     if result["valid"]:
         return result["payload"].get("sub"), result["payload"].get("flight_id")
     
     return None
+
