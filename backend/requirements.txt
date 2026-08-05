@@ -19,3 +19,5 @@ langgraph
 langgraph-checkpoint-postgres
 redis
 apscheduler
+psycopg2
+pydantic[email]

@@ -87,6 +87,7 @@ async def register_passenger(payload: PassengerRegistrationRequest, db: Session=
             departure_time_utc=flight_data["departure_time_utc"],
             arrival_time_utc=flight_data["arrival_time_utc"],
             boarding_time_utc=flight_data["boarding_time_utc"],
+            layover_duration_minutes=flight_data["layover_duration_minutes"],
             baggage_belt=flight_data["baggage_belt"],
             has_layover=flight_data["has_layover"],
             layover_airport=flight_data["layover_airport"],

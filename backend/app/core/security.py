@@ -52,6 +52,7 @@ def create_session_token(user_id: str, flight_id: str, thread_id: str, departure
     """
 
     now = datetime.now(timezone.utc)
+
     activation_time = departure_time_utc - timedelta(hours=4)
     expiration_time = arrival_time_utc + timedelta(hours=6)
 

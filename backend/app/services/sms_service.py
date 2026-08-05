@@ -19,9 +19,10 @@ class SMSService:
     def send_message(self, to_phone: str, body: str) -> bool:
         if not self.enabled:
             logger.info(f"To: {to_phone} | Message: {body}")
+            return True
         
         try:
-            message = self.client.message.create(
+            message = self.client.messages.create(
                 body = body,
                 from_  = self.from_number,
                 to = to_phone

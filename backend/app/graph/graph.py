@@ -27,7 +27,7 @@ def build_graph():
 
     workflow = StateGraph(AgentState)
 
-    workflow.add_note("llm_node", call_model)
+    workflow.add_node("llm_node", call_model)
     workflow.add_node("tools", airport_tool_node)
 
     workflow.add_node("out_of_scope_node", handle_out_of_scope)
@@ -57,7 +57,7 @@ def build_graph():
 
     workflow.add_edge("tools", "llm_node")
 
-    workflow.add_edge("out_of_scope", END)
+    workflow.add_edge("out_of_scope_node", END)
     workflow.add_edge("inappropriate_node", END)
     workflow.add_edge("system_error_node", END)
 
