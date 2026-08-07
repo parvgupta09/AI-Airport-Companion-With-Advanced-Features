@@ -92,7 +92,7 @@ app.add_middleware(
 )
 
 app.include_router(auth_routes.router)
-app.include_router(flights_routes.router)
+app.include_router(f.   lights_routes.router)
 app.include_router(chat_routes.router)
 app.include_router(admin_routes.router)
 
