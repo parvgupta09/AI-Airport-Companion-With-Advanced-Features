@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 class RouteDecision(BaseModel):
     intent: Literal[
-        "airport_assisance",
+        "airport_assistance",
         "chit_chat",
         "out_of_scope",
         "inappropriate"
@@ -21,6 +21,7 @@ def route_user_message(state: AgentState) -> str:
     Evaluates the user's recent chat history to determine the intent of the user's latest message.
     Returns a string (the intent) which will be used by the graph's conditional edges to route the flow.
     """
+    logger.info("Routing user message with recent context to determine intent...")
 
     recent_messages = state["messages"][-4:]
     logger.info("Routing user message with recent context to determine intent...")
@@ -35,7 +36,15 @@ def route_user_message(state: AgentState) -> str:
     chain = router_prompt_template | router_llm
 
     try:
+        clean_messages = []
+        for msg in state["messages"]:
+            if msg.type == "human":
+                clean_messages.append(msg)
+            elif msg.type == "ai" and not getattr(msg, "tool_calls", None):
+                clean_messages.append(msg)
+
         decision = chain.invoke({"messages" : recent_messages})
+        
         logger.info(f"Message routed as : {decision.intent}")
         return decision.intent
 
