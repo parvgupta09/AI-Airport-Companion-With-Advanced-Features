@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from pydantic import BaseModel, EmailStr, Field
 from sqlalchemy.orm import Session
 
-from app.core.security import get_passoword_hash, verify_password, create_session_token
+from app.core.security import get_password_hash, verify_password, create_session_token
 from app.database.postgres_session import get_db
 from app.database.postgres_models import (
     RetailerUser,
@@ -37,7 +37,7 @@ class RetailerResponse(BaseModel):
         from_attributes = True
 
 class OfferCreateRequest(BaseModel):
-    retailer_i: uuid.UUID = Field(..., description="UUID of the RetailerUser creating the offer")
+    retailer_id: uuid.UUID = Field(..., description="UUID of the RetailerUser creating the offer")
     offer_text: str = Field(..., min_length=5, description="The promotional text/deal")
     walking_node_id: str = Field(..., description="Graph node ID where this shop is located")
     active_until: datetime = Field(..., description="UTC expiration time fo the deal")
@@ -49,8 +49,8 @@ class OfferResponse(BaseModel):
     terminal: str
     category: str
     offer_text: str
-    walking_node: str
-    active_until: str
+    walking_node_id: str
+    active_until: datetime
 
 class OfferListResponse(BaseModel):
     success: bool
@@ -90,7 +90,7 @@ async def create_retailer(payload: RetailerCreateRequest, db: Session = Depends(
             terminal=payload.terminal,
             category=payload.category,
             email=payload.email.lower().strip(),
-            password_hash=get_passoword_hash(payload.password)
+            password_hash=get_password_hash(payload.password)
         )
 
         db.add(new_retailer)
