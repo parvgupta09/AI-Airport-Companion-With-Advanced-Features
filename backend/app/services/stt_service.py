@@ -27,7 +27,7 @@ class STTService:
             }
 
             files = {
-                "file": (filename. io.BytesIO(audio_bytes), "audio/wav")
+                "file": (filename, io.BytesIO(audio_bytes), "audio/wav")
             }
 
             data = {
@@ -56,4 +56,4 @@ class STTService:
             logger.error(f"Unexpected error in STTService: {str(e)}", exc_info=True)
             return None
 
-stt_service = STTService
+stt_service = STTService()

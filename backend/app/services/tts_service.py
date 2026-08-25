@@ -12,7 +12,7 @@ class TTSService:
         self.enabled = bool(self.api_key)
         self.url = "https://api.sarvam.ai/text-to-speech"
 
-    def text_to_speech(self, text: str, speaker: str = "shubh") -> Optional[bytes]:
+    def text_to_speech(self, text: str, speaker: str = "shubh", language_code: str = "en-IN") -> Optional[bytes]:
         """
         Converts the AI text response to WAV audio bytes using Sarvam AI Bulul model.
         """
@@ -33,11 +33,9 @@ class TTSService:
 
             payload = {
                 "inputs": [clean_text],
-                "target_language_code": "en_IN",
+                "target_language_code": language_code,
                 "speaker": speaker,
-                "pitch": 0,
                 "pace": 1.0,
-                "loudness": 1.5,
                 "speech_sample_rate": 22050,
                 "enable_preprocessing": True,
                 "model": "bulbul:v3"
