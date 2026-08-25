@@ -89,15 +89,17 @@ def get_walking_directions(start_location: str, end_location: str, terminal: str
         return f"I couldn't locate '{start_location}' or '{end_location}' on the map. Please specify a store name, gate, or terminal."
 
     try:
-        distance = nx.shortest_path_length(airport_graph, source=start_node_id, target=end_node_id, weight="weight")
+        raw_distance = nx.shortest_path_length(airport_graph, source=start_node_id, target=end_node_id, weight="weight")
         path = nx.shortest_path(airport_graph, source=start_node_id, target=end_node_id, weight="weight")
+
+        actual_minutes = max(1, round(raw_distance/10))
 
         path_names = [airport_graph.nodes[n].get("name", n) for n in path]
         route_str = " -> ".join(path_names)
 
         return(
             f"Navigation from {path_names[0]} to {path_names[-1]}: \n"
-            f"Estimated Walking Time : {distance} minutes. \n"
+            f"Estimated Walking Time : {actual_minutes} minutes. \n"
             f"Route: {route_str}"
         )
 
@@ -131,7 +133,8 @@ def find_nearby_amenities(current_location: str, category: str, terminal: str = 
         clean_category = category.strip().lower()
         all_matching_nodes = []
 
-        for node_id, dist in lengths.items():
+        for node_id, raw_dist in lengths.items():
+            dist = max(1, round(raw_dist/10))
             node_data = airport_graph.nodes[node_id]
 
             node_type = str(node_data.get("type", "")).lower()
@@ -139,7 +142,7 @@ def find_nearby_amenities(current_location: str, category: str, terminal: str = 
             node_sub = str(node_data.get("subtype", "")).lower()
 
             if clean_category in (node_type, node_cat, node_sub):
-                if dist>0:
+                if raw_dist>0:
                     all_matching_nodes.append({
                         "name": node_data.get("name"),
                         "dist": dist,

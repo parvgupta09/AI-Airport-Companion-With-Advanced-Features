@@ -3,6 +3,7 @@ import json
 import time
 from datetime import datetime, timedelta, timezone
 from langchain_core.tools import tool
+from langchain_core.runnables import RunnableConfig
 from sqlalchemy.orm import Session
 from app.database.postgres_session import SessionLocal
 from app.database.postgres_models import Reminder
@@ -13,7 +14,7 @@ logger = logging.getLogger(__name__)
 REMINDER_ZSET_KEY = "airport:delayed_reminders"
 
 @tool
-async def schedule_passenger_reminder(user_id: str, task_description: str, minutes_from_now: int) -> str:
+async def schedule_passenger_reminder(task_description: str, minutes_from_now: int, config: RunnableConfig) -> str:
     """
     Schedules an alert for the passenger.
 
@@ -22,6 +23,11 @@ async def schedule_passenger_reminder(user_id: str, task_description: str, minut
         task_description: What to remind them about (e.g., 'Boarding starts soon', 'Pick up duty-free')
         minutes_from_now: How many minutes from now to send the alert.
     """
+
+    user_id = config.get("configurable",{}).get("user_id")
+
+    if not user_id:
+        return "There was an internal error scheduling the reminder. User context missing."
 
     db: Session = SessionLocal()
 
@@ -41,7 +47,7 @@ async def schedule_passenger_reminder(user_id: str, task_description: str, minut
         db.refresh(new_reminder)
 
         redis_payload = json.dumps({
-            "id" : new_reminder.id,
+            "id" : str(new_reminder.id),
             "user_id" : user_id,
             "task_description" : task_description
         })
