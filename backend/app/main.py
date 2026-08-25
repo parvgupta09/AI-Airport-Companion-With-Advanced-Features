@@ -7,11 +7,6 @@ from fastapi.responses import JSONResponse
 from app.database.postgres_session import engine
 from app.database.postgres_models import (
     Base,
-    User,
-    Flight,
-    RetailerUser,
-    RetailerOffer,
-    Reminder,
 )
 from app.core.config import FRONTEND_URL
 
@@ -92,7 +87,7 @@ app.add_middleware(
 )
 
 app.include_router(auth_routes.router)
-app.include_router(f.   lights_routes.router)
+app.include_router(flights_routes.router)
 app.include_router(chat_routes.router)
 app.include_router(admin_routes.router)
 
