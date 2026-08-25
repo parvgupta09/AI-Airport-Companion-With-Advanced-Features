@@ -11,7 +11,7 @@ from app.core.config import JWT_SECRET, JWT_ALGORITHM
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-def get_passoword_hash(password: str) -> str:
+def get_password_hash(password: str) -> str:
     """
     Returns a secure brcypt hash of the plaintext password
     """
@@ -31,6 +31,13 @@ def create_magic_link_token(user_id: str, flight_id: str, departure_time_utc: da
     """
 
     now = datetime.now(timezone.utc)
+
+    if departure_time_utc.tzinfo is None:
+        departure_time_utc = departure_time_utc.replace(tzinfo=timezone.utc)
+
+    if arrival_time_utc.tzinfo is None:
+        arrival_time_utc = arrival_time_utc.replace(tzinfo=timezone.utc)
+    
     activation_time = departure_time_utc - timedelta(hours=4)
     expiration_time = arrival_time_utc + timedelta(hours=8)
 
@@ -52,6 +59,12 @@ def create_session_token(user_id: str, flight_id: str, thread_id: str, departure
     """
 
     now = datetime.now(timezone.utc)
+
+    if arrival_time_utc.tzinfo is None:
+        arrival_time_utc = arrival_time_utc.replace(tzinfo=timezone.utc)
+
+    if departure_time_utc.tzinfo is None:
+        departure_time_utc = departure_time_utc.replace(tzinfo=timezone.utc)
 
     activation_time = departure_time_utc - timedelta(hours=4)
     expiration_time = arrival_time_utc + timedelta(hours=6)
@@ -83,7 +96,7 @@ def verify_token(token: str, expected_type: str) -> Dict[str, Any]:
         return {"valid": True, "payload": payload}
     
     except jwt.ImmatureSignatureError:
-        return {"valid": False, "error": "Token will get activaated 4 hrs before departure time"}
+        return {"valid": False, "error": "Token will get activated 4 hrs before departure time"}
     
     except jwt.ExpiredSignatureError:
         return {"valid": False, "error": "Token has been expired"}
@@ -103,4 +116,3 @@ def extract_user_and_flight(token:str , expected_type: str= "session") -> Option
         return result["payload"].get("sub"), result["payload"].get("flight_id")
     
     return None
-
