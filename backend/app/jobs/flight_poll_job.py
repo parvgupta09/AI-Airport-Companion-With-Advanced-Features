@@ -8,6 +8,7 @@ from app.database.postgres_models import Flight, FlightStatus
 from app.database.postgres_session import SessionLocal
 from app.services.flight_simulator import flight_simulator
 from app.core.redis_client import get_redis
+import asyncio
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +21,10 @@ async def poll_active_flights():
     redis_client = await get_redis()
 
     try:
-        active_flights = db.query(Flight).filter(Flight.status.notin_([FlightStatus.COMPLETED, FlightStatus.CANCELLED])).all()
+        def fetch_flights():
+            return db.query(Flight).filter(Flight.status.notin_([FlightStatus.COMPLETED, FlightStatus.CANCELLED])).all()
+
+        active_flights = await asyncio.to_thread(fetch_flights)
 
         if not active_flights:
             return
@@ -73,7 +77,7 @@ async def poll_active_flights():
                 logger.error(f"Error processing flight {flight.flight_number}: {str(e)}")
 
         if changes_made:
-            db.commit()
+            await asyncio.to_thread(db.commit)
 
     except Exception as e:
         logger.error(f"Database error during flight polling job: {str(e)}")

@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from app.database.postgres_models import Reminder
 from app.database.postgres_session import SessionLocal
 from app.core.redis_client import get_redis
+import asyncio
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +45,11 @@ async def process_reminders() -> None:
                 user_id = reminder_data.get("user_id")
                 message = reminder_data.get("task_description")
 
-                reminder_db = db.query(Reminder).filter(Reminder.id == reminder_id).first()
+                def fetch_reminder():
+                    return db.query(Reminder).filter(Reminder.id == reminder_id).first()
+
+                reminder_db = await asyncio.to_thread(fetch_reminder)
+
                 if reminder_db and not reminder_db.is_sent:
                     reminder_db.is_sent = True
                     logger.info(f"Triggering reminder {reminder_id} for user {user_id}: '{message}'")
@@ -57,7 +62,7 @@ async def process_reminders() -> None:
                     }
                     await redis_client.publish("airport:alerts", json.dumps(alert_payload))
 
-            db.commit()
+            await asyncio.to_thread(db.commit)
             logger.info(f"Processed and dispatched {len(due_items)} due passenger reminders.")
 
         except Exception as db_err:
