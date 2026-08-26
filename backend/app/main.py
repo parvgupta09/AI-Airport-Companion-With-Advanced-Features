@@ -4,6 +4,7 @@ from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from app.core.redis_client import redis_pool
 from app.database.postgres_session import engine
 from app.database.postgres_models import (
     Base,
@@ -61,6 +62,13 @@ async def lifespan(app: FastAPI):
 
         except Exception as e:
             logger.error(f"Error shutting down scheduler: {str(e)}")
+
+    try:
+        await redis_pool.aclose()
+        logger.info("Redis connection pool closed gracefully.")
+
+    except Exception as e:
+        logger.error(f"Error closing Redis pool: {str(e)}")
 
 
 app = FastAPI(
