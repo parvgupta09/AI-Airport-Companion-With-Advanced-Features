@@ -49,7 +49,7 @@ async def start_notification_listener() -> None:
     pubsub = redis_client.pubsub()
 
     try:
-        await pubsub.subscribe("airports:alerts")
+        await pubsub.subscribe("airport:alerts")
         logger.info("Subscribed to Redis Pub/Sub channel 'airport:alerts' for WebSocket and SMS/Email dispatch.")
 
         while True:
@@ -91,7 +91,7 @@ async def start_notification_listener() -> None:
 
                         elif alert_type=="reminder" and not delivered:
                             logger.info(f"User {user_id} offline. Routng reminder vis SMS fallback...")
-                            _, phone = await asyncio.to_thread(get_user_contact, user_id)
+                            email, phone = await asyncio.to_thread(get_user_contact, user_id)
 
                             if phone:
                                 await asyncio.to_thread(
