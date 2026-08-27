@@ -24,7 +24,7 @@ async def fetch_airport_weather() -> dict[str, dict]:
         logger.warning("OPENWEATHER_API_KEY is missing in configuration. Skipping weather job.")
         return {}
 
-    url = "https://api.openweather.org/data/2.5/weather"
+    url = "https://api.openweathermap.org/data/2.5/weather"
     db = SessionLocal()
     redis_client = await get_redis()
     cached_summary: dict[str, dict] = {}
