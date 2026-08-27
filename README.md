@@ -2,6 +2,13 @@
 
 An **autonomous, agentic AI terminal companion** for passengers — powered by **Google Gemini**, **LangGraph**, **RAG**, **WebSockets**, and a full **Voice I/O** pipeline. Deployed on AWS.
 
+<img src="./your-image-1.png" width="900" alt="System Architecture"/>
+
+<img src="./your-image-2.png" width="900" alt="Passenger Journey"/>
+
+<img src="./your-image-3.png" width="900" alt="Retailer Flow"/>
+
+
 ---
 
 ## 🌐 What It Does
